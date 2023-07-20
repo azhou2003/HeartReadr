@@ -84,7 +84,7 @@ def main():
             # Extract numbers from the recognized text
             numbers = extract_numbers(text)
 
-            #todo: do something with the list of numbers   
+            #todo: do something with the list of numbers and skipped frames
 
     else:
         
