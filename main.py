@@ -84,11 +84,13 @@ def main():
             # Extract numbers from the recognized text
             numbers = extract_numbers(text)
 
-            #todo: do something with the list of numbers and skipped frames
+            #todo: do something with the list of numbers and add it to value_per_frame
 
     else:
         
         raise ValueError(f"Unable to open {file_name}")
+    
+    #todo: do something with numbers and skipped frames
 
 
     
