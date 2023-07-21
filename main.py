@@ -2,6 +2,8 @@ import cv2
 import pytesseract
 from PIL import Image
 import re
+import matplotlib.pyplot as plt
+import numpy as np
 
 #number of skipped frames
 skipped_frames = 0
@@ -38,7 +40,7 @@ def main():
     #video file
     file_name = 'video.mp4'
 
-    #ocr region
+    #ocr region, will be dependent on user input and also video resolution
     x_begin = 0
     x_end = 100
     y_begin = 0
@@ -53,6 +55,11 @@ def main():
 
     #list of numbers for every frame
     value_per_frame = []
+
+    if video_cap.isOpened():
+        pass
+    else: 
+        raise ValueError(f"Unable to open {file_name}")
 
     while(video_cap.isOpened()):
         ret, frame = video_cap.read()
@@ -74,12 +81,13 @@ def main():
             # Extract numbers from the recognized text
             numbers = extract_numbers(text)
 
+            #add number in frame to recorded list
             value_per_frame.append(numbers[0])
-
-    else: 
-        raise ValueError(f"Unable to open {file_name}")
     
-    #todo: do something with numbers and skipped frames
+    #todo: do something with numbers and skipped frames, maybe plot and then display statistical values
+    average_value = np.mean(value_per_frame)
+    plt.plot(value_per_frame)
+    plt.show()
 
 def unit_tests():
 
