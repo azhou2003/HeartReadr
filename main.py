@@ -1,6 +1,10 @@
 import cv2
 import pytesseract
 from PIL import Image
+import re
+
+#number of skipped frames
+skipped_frames = 0
 
 def ocr_core(image):
     """
@@ -25,23 +29,12 @@ def extract_numbers(text):
     :returns: a list containing numbers
     """
 
-    #todo: read documentation for re.findall()
-
-    return 
-
-def crop_image(image, x_begin, x_end, y_begin, y_end):
-    """
-    crops image using inputted coordinates
-    :param image: PIL image object
-    :param x_begin: x coordinate where to start
-    :param x_end: x coordinate where to end
-    :param y_begin: y coordinate where to start
-    :param y_end: y coordinate where to end
-    :returns: a cropped image object
-    """
+    return re.findall(r'\d+', text)
 
 def main():
     
+    global skipped_frames
+
     #video file
     file_name = 'video.mp4'
 
@@ -61,22 +54,19 @@ def main():
     #list of numbers for every frame
     value_per_frame = []
 
-    #number of skipped frames
-    skipped_frames = 0
-
     while(video_cap.isOpened()):
         ret, frame = video_cap.read()
 
         if ret == True: #ret is False at end of video
 
             #Converts the frame to grayscale
-            gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+            gray_image = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
 
             #Convert the OpenCV image to a PIL image (required for pytesseract)
-            pil_image = Image.fromarray(gray)
+            pil_image = Image.fromarray(gray_image)
 
             #Crops the image
-            pil_image = crop_image(pil_image)
+            pil_image = pil_image.crop((x_begin, y_end, x_end, y_begin))
 
             #Run OCR on the image
             text = ocr_core(pil_image)
@@ -84,15 +74,16 @@ def main():
             # Extract numbers from the recognized text
             numbers = extract_numbers(text)
 
-            #todo: do something with the list of numbers and add it to value_per_frame
+            value_per_frame.append(numbers[0])
 
-    else:
-        
+    else: 
         raise ValueError(f"Unable to open {file_name}")
     
     #todo: do something with numbers and skipped frames
 
+def unit_tests():
 
+    pass
     
 
 if __name__ == "__main__":
