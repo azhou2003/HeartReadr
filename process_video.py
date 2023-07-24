@@ -1,6 +1,7 @@
 import cv2
 import pytesseract
 from PIL import Image
+import re
 
 # You may need to adjust this path depending on your installation
 pytesseract.pytesseract.tesseract_cmd = r'/usr/local/bin/tesseract'

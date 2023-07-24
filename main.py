@@ -5,8 +5,15 @@ import re
 import matplotlib.pyplot as plt
 import numpy as np
 
+from dotenv import load_dotenv
+import os
+
+# Load the .env file
+load_dotenv()
+
 #number of skipped frames
 skipped_frames = 0
+pytesseract.pytesseract.tesseract_cmd = os.getenv('TESSERACT_CMD_PATH')
 
 def ocr_core(image):
     """
@@ -38,7 +45,7 @@ def main():
     global skipped_frames
 
     #video file
-    file_name = 'video.mp4'
+    file_name = 'input_video/test1.MP4'
 
     #ocr region, will be dependent on user input and also video resolution
     x_begin = 0
@@ -73,7 +80,7 @@ def main():
             pil_image = Image.fromarray(gray_image)
 
             #Crops the image
-            pil_image = pil_image.crop((x_begin, y_end, x_end, y_begin))
+            pil_image = pil_image.crop((x_begin, y_begin, x_end, y_end))
 
             #Run OCR on the image
             text = ocr_core(pil_image)
