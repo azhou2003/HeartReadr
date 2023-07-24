@@ -1,6 +1,7 @@
 # HeartReadr specific
 env/
 input_video/
+frames/
 
 # Django #
 *.log

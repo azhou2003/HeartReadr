@@ -14,39 +14,6 @@ load_dotenv()
 
 #number of skipped frames
 skipped_frames = 0
-pytesseract.pytesseract.tesseract_cmd = os.getenv('TESSERACT_CMD_PATH')
-
-'''
-def ocr_core(image):
-    """
-    converts text in image into a string
-    :param image: PIL image object
-    :returns: string representation of text in image
-    """
-    global skipped_frames
-
-    try:
-        text = pytesseract.image_to_string(image, config='--psm 6 --oem 3 outputbase digits')
-    except RuntimeError as timeout_err:
-        text = ""
-        skipped_frames += 1
-        pass
-    return text
-'''
-
-def ocr_core(image, pipeline):
-    """
-    converts text in image into a string
-    :param image: PIL image object
-    :returns: string representation of text in image
-    """
-
-    global skipped_frames
-    prediction_groups  = pipeline.recognize(image)
-    
-    if len(prediction_groups) == 0:
-        return (None,None)
-    return prediction_groups[0][0]
 
 def extract_numbers(text):
     """
@@ -62,7 +29,7 @@ def main():
     global skipped_frames
 
     #video file
-    file_name = 'input_video/test1.MP4'
+    file_name = 'input_video/test_vid_short.mp4'
 
     #ocr region, will be dependent on user input and also video resolution
     x_begin = 1050 # left
@@ -74,20 +41,16 @@ def main():
     #frames_per_sec = 3
     #scan_duration = 6000 #in seconds
 
-    # OCR initialization
-    pipeline = keras_ocr.pipeline.Pipeline()
-
     #Open the video file
     video_cap = cv2.VideoCapture(file_name)
-
-    #list of numbers for every frame
-    value_per_frame = []
 
     if video_cap.isOpened():
         pass
     else: 
         raise ValueError(f"Unable to open {file_name}")
     
+    image_names = []
+    count = 1
     while(video_cap.isOpened()):
         ret, frame = video_cap.read()
 
@@ -101,25 +64,46 @@ def main():
 
             #Crops the image
             pil_image = pil_image.crop((x_begin, y_begin, x_end, y_end)) #left, upper, right, lower
+            
+            print(f'Reading frame: {count}')
+            count += 1
+            #name of the video to be processed
+            video_name ='vid1'
 
-            #Run OCR on the image
-            text = ocr_core(pil_image)
+            #creating the name of the current frame 
+            frame_filename = f'frames/{video_name}_{count}.png'
 
-            # Extract numbers from the recognized text
-            numbers = extract_numbers(text)
-            timestamp = video_cap.get(cv2.CAP_PROP_POS_MSEC)
-            print(f'Detected in frame: {numbers} | {timestamp/1000}')
+            #adding name of current frame into list
+            image_names.append(frame_filename)
 
-            #add number in frame to recorded list
-            if (len(numbers) == 0):
-                continue
-            value_per_frame.append(numbers[0])
+            # Save the current frame as an image file
+            pil_image.save(frame_filename, format='PNG')
         else:
             break
+
     # Close the video file
     video_cap.release()
-
     
+
+    print('starting OCR recognition')
+    # OCR initialization
+    pipeline = keras_ocr.pipeline.Pipeline()
+    images = [keras_ocr.tools.read(url) for url in image_names]
+    
+    prediction_groups = pipeline.recognize(images)
+    # [( (82, box_coords) ), (), ()]
+
+    #list of numbers for every frame
+    value_per_frame = []
+
+    for frame in prediction_groups:
+        first_detection = frame[0] if len(frame) > 0 else ('', []) 
+        detected_str, box_coords = first_detection
+        if not detected_str:
+            print('Skipped a frame')
+            continue
+        value_per_frame.append(int(detected_str))
+
     #todo: do something with numbers and skipped frames, maybe plot and then display statistical values
     average_value = np.mean(value_per_frame)
     plt.plot(value_per_frame)
