@@ -56,14 +56,14 @@ class OcrService:
         return pil_image
 
     @staticmethod
-    def save_frame_as_image(pil_image, count):
+    def save_frame_as_image(pil_image, frame_num):
         '''
         Saves the given PIL image as an image file
         :param pil_image: The PIL image to save
-        :param count: Frame count (for filename)
+        :param frame_num: Frame count (for filename)
         :returns: The filename of the saved image
         '''
-        frame_filename = f'frames/frame_{count}.png'
+        frame_filename = f'frames/frame_{frame_num}.png'
         pil_image.save(frame_filename, format='PNG')
         return frame_filename
 
@@ -98,7 +98,7 @@ class OcrService:
             raise ValueError(f"Unable to open {self.file_name}")
 
         image_names = []
-        count = 1
+        frame_num = 0
 
         #Iterating through every frame to process
         while video_cap.isOpened():
@@ -109,9 +109,9 @@ class OcrService:
 
                 #Preprocesses frame and adds name to list
                 pil_image = self.preprocess_frame(frame, self.x_begin, self.x_end, self.y_begin, self.y_end)
-                print(f'Reading frame: {count}')
-                count += 1
-                image_names.append(self.save_frame_as_image(pil_image, count))
+                print(f'Reading frame: {frame_num}')
+                frame_num  += 1
+                image_names.append(self.save_frame_as_image(pil_image, frame_num))
 
             else:
                 break
@@ -120,6 +120,8 @@ class OcrService:
 
         #Recognize number in each frame and adds it to list
         self.value_per_frame = self.recognize_numbers(image_names)
+
+        self.__free_images(frame_num)
     
     def average_value(self):
 
@@ -135,12 +137,21 @@ class OcrService:
     
     def plot_values(self):
 
-        #todo: plot values and save in some directory
+        #todo: plot values and save in some directory or return as some type of image format
 
         pass
 
-    def __del__(self):
+    def __free_images(self, num_images):
+        '''
+        Frees up images created by save_frame_as_image. Private method and should not be used.
+        :param num_images: Number of images to be freed, used as a counter to iterate through every image also
+        '''
+        for num in range(1, num_images + 1):
 
-        #todo: delete video from directory and delete saved frames from directory
+            file_path = f'frames/frame_{num}.png'
 
-        pass
+            if os.path.exists(file_path):
+                
+                os.remove(file_path)
+        
+        
