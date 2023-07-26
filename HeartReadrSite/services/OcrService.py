@@ -20,6 +20,7 @@ class OcrService:
         self.y_begin = y_begin
         self.y_end = y_end
         self.skipped_frames = 0
+        self.value_per_frame = []
 
     @staticmethod
     def extract_numbers(text):
@@ -116,17 +117,16 @@ class OcrService:
         video_cap.release()
 
         #Recognize number in each frame and adds it to list
-        value_per_frame = self.recognize_numbers(image_names)
+        self.value_per_frame = self.recognize_numbers(image_names)
 
         #todo: might need to make these data members so they can be accessed
 
-        average_value = np.mean(value_per_frame)
-        min_value = min(value_per_frame)
-        max_value = max(value_per_frame)
-        plt.plot(value_per_frame)
+        average_value = np.mean(self.value_per_frame)
+        min_value = min(self.value_per_frame)
+        max_value = max(self.value_per_frame)
+        plt.plot(self.value_per_frame)
         plt.show()
 
-        print(value_per_frame)
         print(f'average = {average_value}, min = {min_value}, max = {max_value}')
 
         return min_value, max_value, average_value
