@@ -6,6 +6,8 @@ import keras_ocr
 import os
 import numpy as np
 
+#you will need a frames folder where you instantiate this class 
+
 class OcrService:
 
     def __init__(self, file_name, x_begin, x_end, y_begin, y_end):
@@ -118,19 +120,25 @@ class OcrService:
 
         #Recognize number in each frame and adds it to list
         self.value_per_frame = self.recognize_numbers(image_names)
-
-        #todo: might need to make these data members so they can be accessed
-
-        average_value = np.mean(self.value_per_frame)
-        min_value = min(self.value_per_frame)
-        max_value = max(self.value_per_frame)
-        plt.plot(self.value_per_frame)
-        plt.show()
-
-        print(f'average = {average_value}, min = {min_value}, max = {max_value}')
-
-        return min_value, max_value, average_value
     
+    def average_value(self):
+
+        return np.mean(self.value_per_frame)
+    
+    def min_value(self):
+
+        return min(self.value_per_frame)
+
+    def max_value(self):
+
+        return max(self.value_per_frame)
+    
+    def plot_values(self):
+
+        #todo: plot values and save in some directory
+
+        pass
+
     def __del__(self):
 
         #todo: delete video from directory and delete saved frames from directory
