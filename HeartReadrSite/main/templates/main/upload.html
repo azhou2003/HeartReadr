@@ -1,0 +1,22 @@
+{% load staticfiles %}
+
+<!DOCTYPE html>  
+<html lang="en">  
+<head>  
+    <meta charset="UTF-8">  
+    <title>Title</title>  
+    {% load staticfiles %}  
+    <link href="{% static 'css/sb-admin-2.min.css' %}" >  
+    <script src="{% static 'sb-admin-2.min.css' %}"></script>  
+    <script>alert();</script>  
+</head>  
+<body>  
+</body>  
+</html>  
+
+<form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    <input type="file" name="video">
+    <button type="submit">Upload</button>
+</form>
+

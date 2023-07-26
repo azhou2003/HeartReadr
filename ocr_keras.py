@@ -1,5 +1,4 @@
 import cv2
-#import pytesseract
 from PIL import Image
 import re
 import matplotlib.pyplot as plt
@@ -109,16 +108,6 @@ def main():
     plt.plot(value_per_frame)
     plt.show()
 
-def unit_tests():
-
-    pass
-    
-
 if __name__ == "__main__":
     #todo: more error handling 
-    try:
-        main()
-    except ValueError as value_error:
-        print(value_error.args)
-    else:
-        pass
+    main()
