@@ -5,6 +5,8 @@ import matplotlib.pyplot as plt
 import keras_ocr
 import os
 import numpy as np
+from django.conf import settings
+from django.core.files.storage import FileSystemStorage
 
 #you will need a frames folder where you instantiate this class 
 
@@ -16,7 +18,7 @@ class OcrService:
         :param file_name: the name of the video file to be processed
         :param x_begin, x_end, y_begin, y_end: Coordinates for cropping the OCR Region
         '''
-        self.file_name = file_name
+        self.file_name = os.path.join(settings.MEDIA_ROOT, file_name)
         self.x_begin = x_begin
         self.x_end = x_end
         self.y_begin = y_begin
@@ -63,8 +65,10 @@ class OcrService:
         :param frame_num: Frame count (for filename)
         :returns: The filename of the saved image
         '''
+        fs = FileSystemStorage()
+
         frame_filename = f'frames/frame_{frame_num}.png'
-        pil_image.save(frame_filename, format='PNG')
+        pil_image.save(fs.path(frame_filename))
         return frame_filename
 
     def recognize_numbers(self, image_names):
@@ -74,7 +78,7 @@ class OcrService:
         :returns: A list of detected numbers for each frame
         '''
         pipeline = keras_ocr.pipeline.Pipeline()
-        images = [keras_ocr.tools.read(url) for url in image_names]
+        images = [keras_ocr.tools.read(os.path.join(settings.MEDIA_ROOT, url)) for url in image_names]
         prediction_groups = pipeline.recognize(images)
         value_per_frame = []
 
@@ -121,6 +125,7 @@ class OcrService:
         #Recognize number in each frame and adds it to list
         self.value_per_frame = self.recognize_numbers(image_names)
 
+        #frees images
         self.__free_images(frame_num)
     
     def average_value(self):
@@ -150,8 +155,10 @@ class OcrService:
 
             file_path = f'frames/frame_{num}.png'
 
-            if os.path.exists(file_path):
+            abs_file_path = os.path.join(settings.MEDIA_ROOT, file_path)
+
+            if os.path.exists(abs_file_path):
                 
-                os.remove(file_path)
+                os.remove(abs_file_path)
         
         
