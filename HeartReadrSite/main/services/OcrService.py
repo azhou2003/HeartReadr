@@ -18,6 +18,7 @@ class OcrService:
         :param file_name: the name of the video file to be processed
         :param x_begin, x_end, y_begin, y_end: Coordinates for cropping the OCR Region
         '''
+        self.video_name = file_name
         self.file_name = os.path.join(settings.MEDIA_ROOT, file_name)
         self.x_begin = x_begin
         self.x_end = x_end
@@ -57,8 +58,7 @@ class OcrService:
 
         return pil_image
 
-    @staticmethod
-    def save_frame_as_image(pil_image, frame_num):
+    def save_frame_as_image(self, pil_image, frame_num):
         '''
         Saves the given PIL image as an image file
         :param pil_image: The PIL image to save
@@ -67,7 +67,7 @@ class OcrService:
         '''
         fs = FileSystemStorage()
 
-        frame_filename = f'frames/frame_{frame_num}.png'
+        frame_filename = f'frames/{self.video_name}_frame_{frame_num}.png'
         pil_image.save(fs.path(frame_filename))
         return frame_filename
 
@@ -142,23 +142,34 @@ class OcrService:
     
     def plot_values(self):
 
-        
+        num_frames = [i for i in range(1, len(self.value_per_frame) + 1)]
 
-        pass
+        plot_file_name = f'plots/{self.video_name}_plot.png'
+
+        plt.plot(num_frames, self.value_per_frame)
+        plt.title('Values per Frame')
+        plt.xlabel('Frame')
+        plt.ylabel('Value')
+        plt.grid()
+
+        #might not work if i dont make a figure
+        plt.savefig(os.path.join(settings.MEDIA_ROOT, plot_file_name))
+
+        return plot_file_name
 
     def __free_images(self, num_images):
         '''
         Frees up images created by save_frame_as_image. Private method and should not be used.
         :param num_images: Number of images to be freed, used as a counter to iterate through every image also
         '''
+
         for num in range(1, num_images + 1):
 
-            file_path = f'frames/frame_{num}.png'
+            file_path = f'frames/{self.video_name}_frame_{num}.png'
 
             abs_file_path = os.path.join(settings.MEDIA_ROOT, file_path)
 
             if os.path.exists(abs_file_path):
                 
                 os.remove(abs_file_path)
-        
         
