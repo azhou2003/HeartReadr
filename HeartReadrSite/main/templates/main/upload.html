@@ -2,11 +2,37 @@
 
 {% block title %}Upload - {{ block.super }}{% endblock %}
 {% block content %}
-    <h1>Upload your video</h1>
-    <form method="post" enctype="multipart/form-data">
-        {% csrf_token %}
-        {{ form.errors }}
-        {{ form }}
-        <p><input type="submit" value="Upload"></p>
-    </form>
+<div class="container">
+    <br><br>
+    <h1 class="header center pink-text">Upload your video</h1>
+    <div class="row center">
+        <h5 class="header col s12 light">Saving hearts, one pulse at a time</h5>
+    </div>
+    <div class="row center">
+        <div class="col s1 m4"></div>
+        <form class="col s10 m4" method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            <div class="row center">
+                <div id="dropzone" style="border:2px dashed #aaa; height: 200px; line-height:200px; text-align:center;">
+                    Drop file here
+                </div>
+                {{ form.errors }}
+                <div class="center file-field">
+                    
+                    <div class="btn-large waves-effect waves-light purple darken-1 white-text">
+                        <span>Browse files</span>
+                        {{ form.video }}
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col s12">
+                    <p><input class="btn-large waves-effect waves-light purple lighten-5" type="submit" value="Upload"></p>
+                </div>
+            </div>
+        </form>
+        <div class="col s1 m4"></div>
+    </div>
+    <br><br>
+</div>
 {% endblock %}
