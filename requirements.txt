@@ -1,4 +1,5 @@
 absl-py==1.4.0
+asgiref==3.7.2
 asttokens==2.2.1
 astunparse==1.6.3
 backcall==0.2.0
@@ -11,6 +12,7 @@ contourpy==1.1.0
 cycler==0.11.0
 debugpy==1.6.7
 decorator==5.1.1
+Django==4.2.3
 EasyProcess==1.1
 editdistance==0.6.2
 efficientnet==1.0.0
@@ -84,6 +86,7 @@ scikit-image==0.21.0
 scipy==1.11.1
 shapely==2.0.1
 six==1.16.0
+sqlparse==0.4.4
 stack-data==0.6.2
 tensorboard==2.13.0
 tensorboard-data-server==0.7.1
@@ -97,6 +100,7 @@ tornado==6.3.2
 tqdm==4.65.0
 traitlets==5.9.0
 typing_extensions==4.5.0
+tzdata==2023.3
 urllib3==1.26.16
 validators==0.20.0
 wcwidth==0.2.6
