@@ -21,3 +21,11 @@ Make it look nice. Can probably use a basic
 
 ## Frontend <--API--> Backend
 
+todo: 
+
+1. look at OcrService.plot_values, the savefigs occasionally has issues
+2. drag and drop for video
+3. select parameters after uploading video (text form)
+    -drag a red box around ocr region 
+4. display results
+    -maybe allow downloading plot and csv file

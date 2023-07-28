@@ -66,7 +66,6 @@ class OcrService:
         :returns: The filename of the saved image
         '''
         fs = FileSystemStorage()
-
         frame_filename = f'frames/{self.video_name}_frame_{frame_num}.png'
         pil_image.save(fs.path(frame_filename))
         return frame_filename
@@ -156,6 +155,12 @@ class OcrService:
         plt.savefig(os.path.join(settings.MEDIA_ROOT, plot_file_name))
 
         return plot_file_name
+
+    def create_csv(self):
+
+        #to-do
+
+        pass
 
     def __free_images(self, num_images):
         '''

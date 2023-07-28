@@ -48,7 +48,6 @@ def upload(request):
     
     if request.method == 'POST':
 
-        #store video in input_video/ 
         form = UploadFileForm(request.POST, request.FILES)
         if form.is_valid():
             print('VALID')
@@ -72,6 +71,8 @@ def select_parameters(request):
 
     if request.method == 'POST':
 
+        #todo: remove these tests and make something
+
         test1 = OcrService(file_name, 1050, 1225, 830, 960)
 
         test1.process_video()
@@ -93,6 +94,8 @@ def select_parameters(request):
     return render(request, 'main/select_parameters.html', context)
 
 def results(request):
+
+    #todo: remove these tests and make something
 
     fs = FileSystemStorage()
 
