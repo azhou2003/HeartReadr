@@ -2,10 +2,11 @@ from django.shortcuts import render, redirect
 from django.http import HttpResponse
 from django.conf import settings
 from django.core.files.storage import FileSystemStorage
+from django.urls import reverse
 import cv2
 import os
 from PIL import Image
-from .services import OcrService
+from .services.OcrService import OcrService
 from .forms import UploadFileForm
 
 def save_first_frame_as_png(video_filename):
@@ -53,7 +54,7 @@ def upload(request):
             print('VALID')
             video = request.FILES['video']
             fs = FileSystemStorage()
-            file_name = fs.save('input_video/' + video.name, video)
+            file_name = fs.save(video.name, video)
 
             request.session['file_name'] = file_name
 
@@ -69,17 +70,36 @@ def select_parameters(request):
 
     file_name = request.session.get('file_name')
 
-    first_frame = save_first_frame_as_png(file_name)
-
     if request.method == 'POST':
 
-        #process video
+        test1 = OcrService(file_name, 1050, 1225, 830, 960)
 
-        pass
-    
+        test1.process_video()
+
+        plot_path = test1.plot_values()
+
+        request.session['plot_path'] = plot_path
+
+        results_url = reverse('results')
+
+        return redirect(results_url)
+
+    first_frame = save_first_frame_as_png(file_name)
 
     context = {
         'first_frame': first_frame,
     }
 
     return render(request, 'main/select_parameters.html', context)
+
+def results(request):
+
+    fs = FileSystemStorage()
+
+    plot_path = request.session.get('plot_path')
+
+    context = {
+        'plot_path': fs.url(plot_path)
+    }
+
+    return render(request, 'main/results.html', context)
