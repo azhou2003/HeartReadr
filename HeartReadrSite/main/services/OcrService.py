@@ -142,7 +142,7 @@ class OcrService:
     
     def plot_values(self):
 
-        #todo: plot values and save in some directory or return as some type of image format
+        
 
         pass
 

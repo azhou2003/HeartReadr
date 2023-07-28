@@ -16,13 +16,14 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
-from main.views import upload
+from main.views import upload, select_parameters
 from django.conf import settings
 from django.conf.urls.static import static
 
 urlpatterns = [
     path('', upload, name='upload'),
     path('admin/', admin.site.urls),
+    path('select_param/', select_parameters, name = "select_parameters")
 ]
 
 if settings.DEBUG:

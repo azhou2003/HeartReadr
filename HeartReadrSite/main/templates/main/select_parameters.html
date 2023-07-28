@@ -1,23 +1,18 @@
 
 
-<!DOCTYPE html>
-<html>
-    <head>
-        {% load static %}
-        <link type="text/css" rel="stylesheet" href="{% static 'css/materialize.min.css' %}"  media="screen,projection"/>
-    </head>
-    
-    <body>
-        HeartReadr
-        <div class="col s12 m8 offset-m2 l6 offset-l3">
-            <div class="card-panel grey lighten-5 z-depth-1">
-              <div class="row valign-wrapper">
-                <div class="col s2">
-                  <img src= "{{ first_frame }}" alt="" class="circle responsive-img"> 
-                </div>
-              </div>
-            </div>
+{% extends "main/base.html" %}
+
+{% block title %}Upload - {{ block.super }}{% endblock %}
+{% block content %}
+  HeartReadr
+  <div class="col s12 m8 offset-m2 l6 offset-l3">
+      <div class="card-panel grey lighten-5 z-depth-1">
+        <div class="row valign-wrapper">
+          <div class="col s2">
+            <img src= "{{ first_frame }}" alt="" class="circle responsive-img"> 
           </div>
-          {{ average_value }}
-    </body>
-</html>
+        </div>
+      </div>
+    </div>
+    {{ average_value }}
+{% endblock %}

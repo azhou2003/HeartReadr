@@ -1,11 +1,12 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.http import HttpResponse
 from django.conf import settings
 from django.core.files.storage import FileSystemStorage
 import cv2
 import os
 from PIL import Image
-from .services.OcrService import OcrService
+from .services import OcrService
+from .forms import UploadFileForm
 
 def save_first_frame_as_png(video_filename):
     # Construct the absolute file path of the video using MEDIA_ROOT
@@ -34,6 +35,7 @@ def save_first_frame_as_png(video_filename):
     # Create a FileSystemStorage object
     fs = FileSystemStorage()
 
+    #todo: might need to change this to include video name
     # Save the first frame as a PNG image
     image_path = 'frames/display_frame.png'
     frame.save(fs.path(image_path))
@@ -46,28 +48,38 @@ def upload(request):
     if request.method == 'POST':
 
         #store video in input_video/ 
-        video = request.FILES['video']
-        fs = FileSystemStorage()
-        file_name = fs.save('input_video/' + video.name, video)
-        video_url = fs.url(file_name)
+        form = UploadFileForm(request.POST, request.FILES)
+        if form.is_valid():
+            print('VALID')
+            video = request.FILES['video']
+            fs = FileSystemStorage()
+            file_name = fs.save('input_video/' + video.name, video)
 
-        #get the first frame of the uploaded video
-        first_frame = save_first_frame_as_png(file_name)
+            request.session['file_name'] = file_name
 
-        #test lines delete these
-        absolute_path = os.path.join(settings.MEDIA_ROOT, file_name)
-        test1 = OcrService(absolute_path, 1050, 1225, 830, 960)
-        test1.process_video()
-        avg_value = test1.average_value()
-
-
-        context = {
-            'first_frame': first_frame,
-            'average_value' : avg_value, #test line delete this
-        }
-
-        return render(request, 'main/select_parameters.html', context)
+            return redirect('select_param/')
+        print('INVALID')
+        
+    # GET method  
+    form = UploadFileForm()
+    return render(request, 'main/upload.html', {'form': form})
     
-    # GET method
 
-    return render(request, 'main/upload.html')
+def select_parameters(request):
+
+    file_name = request.session.get('file_name')
+
+    first_frame = save_first_frame_as_png(file_name)
+
+    if request.method == 'POST':
+
+        #process video
+
+        pass
+    
+
+    context = {
+        'first_frame': first_frame,
+    }
+
+    return render(request, 'main/select_parameters.html', context)
