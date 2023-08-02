@@ -53,7 +53,7 @@ def upload(request):
             print('VALID')
             video = request.FILES['video']
             fs = FileSystemStorage()
-            file_name = fs.save(video.name, video)
+            file_name = fs.save('input_video/' + video.name, video)
 
             request.session['file_name'] = file_name
 

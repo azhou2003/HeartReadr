@@ -8,8 +8,6 @@ import numpy as np
 from django.conf import settings
 from django.core.files.storage import FileSystemStorage
 
-#you will need a frames folder where you instantiate this class 
-
 class OcrService:
 
     def __init__(self, file_name, x_begin, x_end, y_begin, y_end):
@@ -18,14 +16,27 @@ class OcrService:
         :param file_name: the name of the video file to be processed
         :param x_begin, x_end, y_begin, y_end: Coordinates for cropping the OCR Region
         '''
-        self.video_name = file_name
-        self.file_name = os.path.join(settings.MEDIA_ROOT, file_name)
+
+        #Stripped video name without directories
+        self.video_name = os.path.basename(file_name)
+
+        #File path of video including directories
+        self.file_name = file_name
+
+        #coordinates for ocr region
         self.x_begin = x_begin
         self.x_end = x_end
         self.y_begin = y_begin
         self.y_end = y_end
+
+        #number of skipped frames
         self.skipped_frames = 0
+
+        #stores the value for each frame
         self.value_per_frame = []
+
+        #FileSystemStorage object used to save media to the Django media directory
+        self.fs = FileSystemStorage(location = settings.MEDIA_ROOT)
 
     @staticmethod
     def extract_numbers(text):
@@ -65,9 +76,10 @@ class OcrService:
         :param frame_num: Frame count (for filename)
         :returns: The filename of the saved image
         '''
-        fs = FileSystemStorage()
+
         frame_filename = f'frames/{self.video_name}_frame_{frame_num}.png'
-        pil_image.save(fs.path(frame_filename))
+        pil_image.save(self.fs.path(frame_filename))
+
         return frame_filename
 
     def recognize_numbers(self, image_names):
@@ -77,7 +89,7 @@ class OcrService:
         :returns: A list of detected numbers for each frame
         '''
         pipeline = keras_ocr.pipeline.Pipeline()
-        images = [keras_ocr.tools.read(os.path.join(settings.MEDIA_ROOT, url)) for url in image_names]
+        images = [keras_ocr.tools.read(self.fs.path(url)) for url in image_names]
         prediction_groups = pipeline.recognize(images)
         value_per_frame = []
 
@@ -140,6 +152,11 @@ class OcrService:
         return max(self.value_per_frame)
     
     def plot_values(self):
+        '''
+        Creates and saves plot to Django Media Folder
+        :return: the file path from the media folder in string form
+        '''
+
 
         num_frames = [i for i in range(1, len(self.value_per_frame) + 1)]
 
@@ -151,8 +168,9 @@ class OcrService:
         plt.ylabel('Value')
         plt.grid()
 
-        #might not work if i dont make a figure
         plt.savefig(os.path.join(settings.MEDIA_ROOT, plot_file_name))
+
+        plt.clf()
 
         return plot_file_name
 
@@ -172,7 +190,7 @@ class OcrService:
 
             file_path = f'frames/{self.video_name}_frame_{num}.png'
 
-            abs_file_path = os.path.join(settings.MEDIA_ROOT, file_path)
+            abs_file_path = self.fs.path(file_path)
 
             if os.path.exists(abs_file_path):
                 
