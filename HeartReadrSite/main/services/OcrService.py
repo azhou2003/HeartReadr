@@ -104,12 +104,12 @@ class OcrService:
         for frame in prediction_groups:
             first_detection = frame[0] if len(frame) > 0 else ('', [])
             detected_str, box_coords = first_detection
-            if not detected_str:
+            if not detected_str or not detected_str.isdigit():
                 print('Skipped a frame')
-                value_per_frame.append(None)
+                value_per_frame.append(np.nan)
                 self.skipped_frames += 1
                 continue
-            value_per_frame.append(int(detected_str))
+            value_per_frame.append(float(detected_str))
         
         return value_per_frame
 
@@ -163,7 +163,7 @@ class OcrService:
     
     def average_value(self):
 
-        return np.mean(self.value_per_frame)
+        return np.nanmean(self.value_per_frame)
     
     def min_value(self):
 
