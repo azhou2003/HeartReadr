@@ -2,6 +2,8 @@ import cv2
 from PIL import Image
 import re
 import csv
+import matplotlib
+matplotlib.use('agg')
 import matplotlib.pyplot as plt
 import keras_ocr
 import os
