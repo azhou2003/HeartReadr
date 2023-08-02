@@ -29,3 +29,4 @@ todo:
     -drag a red box around ocr region 
 4. display results
     -maybe allow downloading plot and csv file
+    -embedded plot and csv file if possible
