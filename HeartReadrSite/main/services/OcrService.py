@@ -1,9 +1,11 @@
 import cv2
 from PIL import Image
 import re
+import csv
 import matplotlib.pyplot as plt
 import keras_ocr
 import os
+import io
 import numpy as np
 from django.conf import settings
 from django.core.files.storage import FileSystemStorage
@@ -35,8 +37,14 @@ class OcrService:
         #stores the value for each frame
         self.value_per_frame = []
 
+        #stores the timestamp for each frame
+        self.time_stamps = []
+
         #FileSystemStorage object used to save media to the Django media directory
         self.fs = FileSystemStorage(location = settings.MEDIA_ROOT)
+
+        #Framerate of video
+        self.fps = -1
 
     @staticmethod
     def extract_numbers(text):
@@ -98,6 +106,7 @@ class OcrService:
             detected_str, box_coords = first_detection
             if not detected_str:
                 print('Skipped a frame')
+                value_per_frame.append(None)
                 self.skipped_frames += 1
                 continue
             value_per_frame.append(int(detected_str))
@@ -107,13 +116,19 @@ class OcrService:
     def process_video(self):
 
         #Open the video file
-        video_cap = cv2.VideoCapture(self.file_name)
+        video_cap = cv2.VideoCapture(self.fs.path(self.file_name))
 
         if not video_cap.isOpened():
             raise ValueError(f"Unable to open {self.file_name}")
 
         image_names = []
+
+        #how many frames currently stored
         frame_num = 0
+
+        #counter to indicate which frames to store
+        #for now, by default, records every 6th frame per second starting from first
+        frame_count = 5
 
         #Iterating through every frame to process
         while video_cap.isOpened():
@@ -123,13 +138,20 @@ class OcrService:
             if ret == True:
 
                 #Preprocesses frame and adds name to list
-                pil_image = self.preprocess_frame(frame, self.x_begin, self.x_end, self.y_begin, self.y_end)
-                print(f'Reading frame: {frame_num}')
-                frame_num  += 1
-                image_names.append(self.save_frame_as_image(pil_image, frame_num))
+                if frame_count == 5:
+                    pil_image = self.preprocess_frame(frame, self.x_begin, self.x_end, self.y_begin, self.y_end)
+                    print(f'Reading frame: {frame_num}')
+                    frame_num  += 1
+                    image_names.append(self.save_frame_as_image(pil_image, frame_num))
+                    self.time_stamps.append(video_cap.get(cv2.CAP_PROP_POS_MSEC)/1000)
+                    frame_count = 0
+                else:
+                    frame_count += 1
 
             else:
                 break
+
+        self.fps = video_cap.get(cv2.CAP_PROP_FPS)
 
         video_cap.release()
 
@@ -157,7 +179,6 @@ class OcrService:
         :return: the file path from the media folder in string form
         '''
 
-
         num_frames = [i for i in range(1, len(self.value_per_frame) + 1)]
 
         plot_file_name = f'plots/{self.video_name}_plot.png'
@@ -168,17 +189,35 @@ class OcrService:
         plt.ylabel('Value')
         plt.grid()
 
-        plt.savefig(os.path.join(settings.MEDIA_ROOT, plot_file_name))
+        plt.savefig(self.fs.path(plot_file_name))
 
         plt.clf()
 
         return plot_file_name
 
     def create_csv(self):
+        """
+        Save a CSV file to the media folder with two columns: time_stamps, value_per_frame.
+        :returns: file path from Django media folder to the csv file
+        """
+        file_name = f'csvs/{self.video_name}_data.csv'
 
-        #to-do
+        # Create a CSV file in memory
+        csv_file = io.StringIO()
+        csv_writer = csv.writer(csv_file, lineterminator = '\n')
 
-        pass
+        # Write the header
+        csv_writer.writerow(['time_stamp (s)', 'value_per_frame'])
+
+        # Write the data
+        csv_writer.writerows(zip(self.time_stamps, self.value_per_frame))
+
+        abs_path = self.fs.path(file_name)
+        with open(abs_path, 'w') as file:
+            file.write(csv_file.getvalue())
+
+        return file_name
+
 
     def __free_images(self, num_images):
         '''

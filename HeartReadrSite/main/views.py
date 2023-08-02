@@ -9,12 +9,12 @@ from PIL import Image
 from .services.OcrService import OcrService
 from .forms import UploadFileForm
 
-def save_first_frame_as_png(video_filename):
-    # Construct the absolute file path of the video using MEDIA_ROOT
-    video_path = os.path.join(settings.MEDIA_ROOT, video_filename)
+def save_first_frame_as_png(video_name):
+
+    fs = FileSystemStorage(location = settings.MEDIA_ROOT)
 
     # Open the video file
-    cap = cv2.VideoCapture(video_path)
+    cap = cv2.VideoCapture(fs.path(video_name))
 
     # Check if the video was opened successfully
     if not cap.isOpened():
@@ -33,19 +33,29 @@ def save_first_frame_as_png(video_filename):
     #Converting from OpenCV format to PIL format
     frame = Image.fromarray(frame)
 
-    # Create a FileSystemStorage object
-    fs = FileSystemStorage()
-
-    #todo: might need to change this to include video name
-    # Save the first frame as a PNG image
-    image_path = 'frames/display_frame.png'
+    stripped_vid_name = os.path.basename(video_name)
+    image_path = f'frames/{stripped_vid_name}_display_frame.png'
     frame.save(fs.path(image_path))
 
     # Return the file path of the saved image
     return fs.url(image_path)
 
+def create_directories():
+
+    fs = FileSystemStorage(location= settings.MEDIA_ROOT)
+
+    for directory in ['csvs', 'frames', 'input_video', 'plots']:
+
+        directory_path = fs.path(directory)
+
+        if not os.path.exists(directory_path):
+            os.makedirs(directory_path)
+
 def upload(request):
     
+    #creating media directories
+    create_directories()
+
     if request.method == 'POST':
 
         form = UploadFileForm(request.POST, request.FILES)
@@ -78,6 +88,8 @@ def select_parameters(request):
         test1.process_video()
 
         plot_path = test1.plot_values()
+
+        csv_path = test1.create_csv()
 
         request.session['plot_path'] = plot_path
 
