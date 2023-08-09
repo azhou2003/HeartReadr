@@ -23,9 +23,6 @@ Make it look nice. Can probably use a basic
 
 todo: 
 
-2. drag and drop for video
-3. select parameters after uploading video (text form)
-    -drag a red box around ocr region 
-4. display results
-    -maybe allow downloading plot and csv file
-    -embedded plot and csv file if possible
+1. Cleanup Website
+2. Find a solution to clearing media
+3. Deploy
