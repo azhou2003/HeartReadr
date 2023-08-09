@@ -5,19 +5,9 @@
 
 <img src= "{{ plot_path }}" style="display: block; max-width: 100%;"> 
 
-<table border="1">
-  <tr>
-      {% for header in csv_data.0.keys %}
-          <th>{{ header }}</th>
-      {% endfor %}
-  </tr>
-  {% for row in csv_data %}
-      <tr>
-          {% for value in row.values %}
-              <td>{{ value }}</td>
-          {% endfor %}
-      </tr>
-  {% endfor %}
-</table>
+<a href=" {{ csv_path }} " download="data.csv">Download CSV</a>
+
+
 
 {% endblock %}
+

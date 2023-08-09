@@ -73,23 +73,15 @@ def results(request):
 
     #todo: remove these tests and make something
 
-    fs = FileSystemStorage()
+    fs = FileSystemStorage(location = settings.MEDIA_ROOT)
 
-    csv_file_path = request.session.get('csv_path')
-    csv_data = []
-    
-    with open(csv_file_path, 'r') as csv_file:
-        lines = csv_file.readlines()
-        headers = lines[0].strip().split(',')
-        
-        for line in lines[1:]:
-            values = line.strip().split(',')
-            csv_data.append(dict(zip(headers, values)))
+    csv_path = request.session.get('csv_path')
 
     plot_path = request.session.get('plot_path')
 
     context = {
-        'plot_path': fs.url(plot_path)
+        'plot_path': fs.url(plot_path),
+        'csv_path': fs.url(csv_path),
     }
 
     return render(request, 'main/results.html', context)
