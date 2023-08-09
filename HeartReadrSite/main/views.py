@@ -7,49 +7,8 @@ import cv2
 import os
 from PIL import Image
 from .services.OcrService import OcrService
+from .services.FileHandlingService import save_first_frame_as_png, create_directories
 from .forms import UploadFileForm
-
-def save_first_frame_as_png(video_name):
-
-    fs = FileSystemStorage(location = settings.MEDIA_ROOT)
-
-    # Open the video file
-    cap = cv2.VideoCapture(fs.path(video_name))
-
-    # Check if the video was opened successfully
-    if not cap.isOpened():
-        raise ValueError("Error opening video file.")
-
-    # Read the first frame
-    ret, frame = cap.read()
-
-    # Release the video capture object
-    cap.release()
-
-    # Check if a frame was read
-    if not ret:
-        raise ValueError("No frame was read from the video.")
-
-    #Converting from OpenCV format to PIL format
-    frame = Image.fromarray(frame)
-
-    stripped_vid_name = os.path.basename(video_name)
-    image_path = f'frames/{stripped_vid_name}_display_frame.png'
-    frame.save(fs.path(image_path))
-
-    # Return the file path of the saved image
-    return fs.url(image_path)
-
-def create_directories():
-
-    fs = FileSystemStorage(location= settings.MEDIA_ROOT)
-
-    for directory in ['csvs', 'frames', 'input_video', 'plots']:
-
-        directory_path = fs.path(directory)
-
-        if not os.path.exists(directory_path):
-            os.makedirs(directory_path)
 
 def upload(request):
     
@@ -80,18 +39,23 @@ def select_parameters(request):
     file_name = request.session.get('file_name')
 
     if request.method == 'POST':
+        
+        x_start = int(request.POST.get('x'))
+        y_start = int(request.POST.get('y'))
+        x_end = x_start + int(request.POST.get('width'))
+        y_end = y_start + int(request.POST.get('height'))
 
-        #todo: remove these tests and make something
+        ocr_video_obj = OcrService(file_name, x_start, x_end, y_start, y_end)
 
-        test1 = OcrService(file_name, 1050, 1225, 830, 960)
+        ocr_video_obj.process_video()
 
-        test1.process_video()
+        plot_path = ocr_video_obj.plot_values()
 
-        plot_path = test1.plot_values()
-
-        csv_path = test1.create_csv()
+        csv_path = ocr_video_obj.create_csv()
 
         request.session['plot_path'] = plot_path
+
+        request.session['csv_path'] = csv_path
 
         results_url = reverse('results')
 
@@ -110,6 +74,17 @@ def results(request):
     #todo: remove these tests and make something
 
     fs = FileSystemStorage()
+
+    csv_file_path = request.session.get('csv_path')
+    csv_data = []
+    
+    with open(csv_file_path, 'r') as csv_file:
+        lines = csv_file.readlines()
+        headers = lines[0].strip().split(',')
+        
+        for line in lines[1:]:
+            values = line.strip().split(',')
+            csv_data.append(dict(zip(headers, values)))
 
     plot_path = request.session.get('plot_path')
 

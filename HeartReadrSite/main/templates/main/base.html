@@ -11,6 +11,11 @@
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <!--Import materialize.css-->
     <link type="text/css" rel="stylesheet" href="{% static 'css/materialize.min.css' %}" media="screen,projection" />
+    <!-- Cropper CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.css" />
+    <!-- Cropper JavaScript -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.js"></script>
+
     <!--Let browser know website is optimized for mobile-->
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 </head>
@@ -18,15 +23,15 @@
 <body>
     <!-----------NAV BAR------------------>
     <nav class="pink darken-1" role="navigation">
-        <div class="nav-wrapper container"><a id="logo-container" href="#" class="brand-logo">HeartReadr</a>
+        <div class="nav-wrapper container"><a id="logo-container" href="{% url 'upload' %}" class="brand-logo">HeartReadr</a>
           <ul class="right hide-on-med-and-down">
-            <li><a href="#">Upload</a></li>
+            <li><a href="{% url 'upload' %}">Upload</a></li>
           </ul>
           <!-- Will switch to collapsed ver on mobile view -->
           <ul id="nav-mobile" class="sidenav">
-            <li><a href="#">Upload</a></li>
+            <li><a href="{% url 'upload' %}">Upload</a></li>
           </ul>
-          <a href="#" data-target="nav-mobile" class="sidenav-trigger"><i class="material-icons">menu</i></a>
+          <a href="{% url 'upload' %}" data-target="nav-mobile" class="sidenav-trigger"><i class="material-icons">menu</i></a>
         </div>
     </nav>
     <!-----------NAV BAR END-------------->
@@ -45,6 +50,8 @@
     <!--JavaScript at end of body for optimized loading-->
     <script type="text/javascript" src="{% static 'js/jquery-2.1.1.min.js' %}"></script>
     <script type="text/javascript" src="{% static 'js/materialize.min.js' %}"></script>
+    {% block extra_js %}
+    {% endblock %}
 </body>
 
 </html>

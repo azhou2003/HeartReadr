@@ -23,8 +23,8 @@ from django.conf.urls.static import static
 urlpatterns = [
     path('', upload, name='upload'),
     path('admin/', admin.site.urls),
-    path('select_param/', select_parameters, name = "select_parameters"),
-    path('results/', results, name = "results"),
+    path('select_param/', select_parameters, name = 'select_parameters'),
+    path('results/', results, name = 'results'),
 ]
 
 if settings.DEBUG:
