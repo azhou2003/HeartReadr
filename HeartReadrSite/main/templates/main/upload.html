@@ -13,9 +13,6 @@
         <form class="col s10 m4" method="post" enctype="multipart/form-data">
             {% csrf_token %}
             <div class="row center">
-                <div id="dropzone" style="border:2px dashed #aaa; height: 200px; line-height:200px; text-align:center;">
-                    Drop file here
-                </div>
                 {{ form.errors }}
             </div>
             <div class="row">
@@ -41,4 +38,3 @@
     <br><br>
 </div>
 {% endblock %}
-cd

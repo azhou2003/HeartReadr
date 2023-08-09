@@ -27,11 +27,11 @@
           <ul class="right hide-on-med-and-down">
             <li><a href="{% url 'upload' %}">Upload</a></li>
           </ul>
-          <!-- Will switch to collapsed ver on mobile view -->
-          <ul id="nav-mobile" class="sidenav">
-            <li><a href="{% url 'upload' %}">Upload</a></li>
-          </ul>
-          <a href="{% url 'upload' %}" data-target="nav-mobile" class="sidenav-trigger"><i class="material-icons">menu</i></a>
+          <!-- Will switch to collapsed version on mobile view -->
+        <ul id="nav-mobile" class="sidenav">
+          <li><a href="{% url 'upload' %}">Upload</a></li>
+      </ul>
+      <a href="#nav-mobile" data-target="nav-mobile" class="sidenav-trigger"><i class="material-icons">menu</i></a>
         </div>
     </nav>
     <!-----------NAV BAR END-------------->
@@ -41,17 +41,18 @@
         {% endblock %}
     </div>
     
-    <!-----------FOOTER------------------>
-    <footer>
-        <!-- Your footer goes here -->
-    </footer>
-    <!-----------FOOTER END-------------->
 
+    {% block extra_js %}
+    {% endblock %}
     <!--JavaScript at end of body for optimized loading-->
     <script type="text/javascript" src="{% static 'js/jquery-2.1.1.min.js' %}"></script>
     <script type="text/javascript" src="{% static 'js/materialize.min.js' %}"></script>
-    {% block extra_js %}
-    {% endblock %}
+    <script>
+      document.addEventListener('DOMContentLoaded', function() {
+          var elems = document.querySelectorAll('.sidenav');
+          var instances = M.Sidenav.init(elems);
+      });
+    </script>
 </body>
 
 </html>
