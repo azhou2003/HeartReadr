@@ -209,7 +209,7 @@ class OcrService:
         csv_writer = csv.writer(csv_file, lineterminator = '\n')
 
         # Write the header
-        csv_writer.writerow(['time_stamp (s)', 'value_per_frame'])
+        csv_writer.writerow(['time_stamp_in_sec', 'value_per_frame'])
 
         # Write the data
         csv_writer.writerows(zip(self.time_stamps, self.value_per_frame))

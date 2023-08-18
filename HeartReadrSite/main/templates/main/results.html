@@ -2,11 +2,37 @@
 
 {% block title %}Results - {{ block.super }}{% endblock %}
 {% block content %}
+    
+    <div class="container">
+        
+        <img src= "{{ plot_path }}" style="display: block; max-width: 100%;"> 
 
-<img src= "{{ plot_path }}" style="display: block; max-width: 100%;"> 
-
-<a href=" {{ csv_path }} " download="data.csv">Download CSV</a>
-
+        <a href=" {{ csv_path }} " download="data.csv">Download CSV</a>
+    
+        <div class="table-container">
+          <div class="table-wrapper">
+            <table>
+              <thead>
+                <tr>
+                  <th>Time (s)</th>
+                  <th>Value</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for row in csv_data %}
+                <tr>
+                  <td>{{ row.time_stamp_in_sec }}</td>
+                  <td>{{ row.value_per_frame }}</td>
+                  <!-- Add more fields as needed -->
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        </div>
+    
+        <!-- Other content can continue here -->
+    </div>
 
 
 {% endblock %}
