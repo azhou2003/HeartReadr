@@ -37,6 +37,8 @@ def upload(request):
 
 def select_parameters(request):
 
+    fs = FileSystemStorage(location = settings.MEDIA_ROOT)
+
     file_name = request.session.get('file_name')
 
     if request.method == 'POST':
@@ -64,8 +66,10 @@ def select_parameters(request):
 
     first_frame = save_first_frame_as_png(file_name)
 
+    request.session['first_frame'] = first_frame
+
     context = {
-        'first_frame': first_frame,
+        'first_frame': fs.url(first_frame),
     }
 
     return render(request, 'main/select_parameters.html', context)
@@ -75,6 +79,22 @@ def results(request):
     #todo: remove these tests and make something
 
     fs = FileSystemStorage(location = settings.MEDIA_ROOT)
+
+    file_name = request.session.get('file_name')
+
+    file_name = fs.path(file_name)
+
+    first_frame = request.session.get('first_frame')
+
+    first_frame = fs.path(first_frame)
+    
+    if os.path.exists(file_name):
+                
+        os.remove(file_name)
+
+    if os.path.exists(first_frame):
+                
+        os.remove(first_frame)
 
     csv_path = request.session.get('csv_path')
 

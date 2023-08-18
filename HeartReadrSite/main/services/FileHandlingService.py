@@ -33,7 +33,7 @@ def save_first_frame_as_png(video_name):
     frame.save(fs.path(image_path))
 
     # Return the file path of the saved image
-    return fs.url(image_path)
+    return image_path
 
 def create_directories():
 
