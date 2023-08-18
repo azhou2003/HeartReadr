@@ -160,6 +160,8 @@ class OcrService:
         #Recognize number in each frame and adds it to list
         self.value_per_frame = self.recognize_numbers(image_names)
 
+        self.time_stamps = [round(value, 2) for value in self.time_stamps]
+
         #frees images
         self.__free_images(frame_num)
     

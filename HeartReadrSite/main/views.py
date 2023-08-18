@@ -84,8 +84,6 @@ def results(request):
         csv_reader = csv.DictReader(csv_file)
         csv_data = list(csv_reader)
 
-    print(csv_data)
-
     context = {
         'plot_path': fs.url(plot_path),
         'csv_path': fs.url(csv_path),
