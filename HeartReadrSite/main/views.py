@@ -9,6 +9,7 @@ from PIL import Image
 from .services.OcrService import OcrService
 from .services.FileHandlingService import save_first_frame_as_png, create_directories
 from .forms import UploadFileForm
+import csv
 
 def upload(request):
     
@@ -79,9 +80,16 @@ def results(request):
 
     plot_path = request.session.get('plot_path')
 
+    with open(fs.path(csv_path), 'r') as csv_file:
+        csv_reader = csv.DictReader(csv_file)
+        csv_data = list(csv_reader)
+
+    print(csv_data)
+
     context = {
         'plot_path': fs.url(plot_path),
         'csv_path': fs.url(csv_path),
+        'csv_data': csv_data,
     }
 
     return render(request, 'main/results.html', context)
