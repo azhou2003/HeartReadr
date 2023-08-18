@@ -17,19 +17,19 @@
       {% csrf_token %}
       <div class="input-field col s3">
           <input type="text" id="x" name="x" readonly />
-          <label for="x">X Coordinate</label>
+          <label class="active" for="x">X Coordinate</label>
       </div>
       <div class="input-field col s3">
           <input type="text" id="y" name="y" readonly />
-          <label for="y">Y Coordinate</label>
+          <label class="active" for="y">Y Coordinate</label>
       </div>
       <div class="input-field col s3">
           <input type="text" id="width" name="width" readonly />
-          <label for="width">Width</label>
+          <label class="active" for="width">Width</label>
       </div>
       <div class="input-field col s3">
           <input type="text" id="height" name="height" readonly />
-          <label for="height">Height</label>
+          <label class="active" for="height">Height</label>
       </div>
       <button type="submit" class="btn-large waves-effect waves-light orange">Submit</button>
   </form>
@@ -44,6 +44,7 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.js"></script>
 
 <script>
+
   var image = document.getElementById('image');
   var xInput = document.getElementById('x');
   var yInput = document.getElementById('y');
@@ -61,7 +62,6 @@
       widthInput.value = coordinates.width.toFixed(0);
       heightInput.value = coordinates.height.toFixed(0);
   });
-
   var form = document.getElementById('coordinate-form');
   form.onsubmit = function(e) {
       // The coordinates are already set by the 'crop' event handler
