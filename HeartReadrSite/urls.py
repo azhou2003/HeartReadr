@@ -19,12 +19,15 @@ from django.urls import path
 from main.views import upload, select_parameters, results
 from django.conf import settings
 from django.conf.urls.static import static
+from django.urls import re_path
+from django.views.static import serve
 
 urlpatterns = [
     path('', upload, name='upload'),
     path('admin/', admin.site.urls),
     path('select_param/', select_parameters, name = 'select_parameters'),
     path('results/', results, name = 'results'),
+    re_path(r'^media/(?P<path>.*)$', serve, {'document_root': settings.MEDIA_ROOT}),
 ]
 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
