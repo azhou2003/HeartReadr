@@ -6,7 +6,7 @@ from django.urls import reverse
 import cv2
 import os
 from PIL import Image
-from .services.OcrService import OcrService
+from .services.OcrServiceEasy import OcrService
 from .services.FileHandlingService import save_first_frame_as_png, create_directories
 from .forms import UploadFileForm
 import csv
@@ -45,10 +45,10 @@ def select_parameters(request):
         
         x_start = int(request.POST.get('x'))
         y_start = int(request.POST.get('y'))
-        x_end = x_start + int(request.POST.get('width'))
-        y_end = y_start + int(request.POST.get('height'))
+        width = int(request.POST.get('width'))
+        height = y_start + int(request.POST.get('height'))
 
-        ocr_video_obj = OcrService(file_name, x_start, x_end, y_start, y_end)
+        ocr_video_obj = OcrService(file_name, x_start, width, y_start, height)
 
         ocr_video_obj.process_video()
 
