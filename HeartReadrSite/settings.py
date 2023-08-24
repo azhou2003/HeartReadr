@@ -31,7 +31,6 @@ DEBUG = True if os.getenv('DEBUG') else False
 
 ALLOWED_HOSTS = ['*']
 
-
 # Application definition
 
 INSTALLED_APPS = [
@@ -139,3 +138,5 @@ MEDIA_URL = '/media/'
 
 # Absolute filesystem path to the directory that will hold user-uploaded files.
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
+CSRF_TRUSTED_ORIGINS = ['https://*.railway.app/','https://*.127.0.0.1']
