@@ -22,7 +22,7 @@ def upload(request):
         if form.is_valid():
             print('VALID')
             video = request.FILES['video']
-            fs = FileSystemStorage()
+            fs = FileSystemStorage() 
             file_name = fs.save('input_video/' + video.name, video)
 
             request.session['file_name'] = file_name

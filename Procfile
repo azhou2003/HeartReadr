@@ -1,1 +1,1 @@
-web: python manage.py migrate && gunicorn HeartReadrSite.wsgi:application -w 2 --timeout 18000
+web: python manage.py migrate && gunicorn HeartReadrSite.wsgi:application --timeout 18000
