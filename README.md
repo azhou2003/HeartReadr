@@ -11,15 +11,20 @@ HeartReadr is a web application designed to process screen captures or video fil
 - Media management for input videos, extracted frames, and output plots.
 - Extensible architecture for adding new recognition or analysis services.
 
+## Project Structure
+
+- `HeartReadrSite/` – Django project settings and URLs
+- `main/` – Main application logic, models, views, forms, services, and templates
+- `media/` – Uploaded and generated media (csvs, frames, input_video, plots)
+- `static/` – Static assets (CSS, JS, favicons)
+- `requirements.txt` – Python dependencies
+- `Procfile`, `runtime.txt` – Deployment configuration
+
 ## Tech Stack
 
 - **Backend:** Python 3, Django
 - **Frontend:** Django Templates, HTML/CSS/JS (static assets)
 - **Computer Vision:** OpenCV, EasyOCR, and PyTorch (see requirements.txt)
-
-## Problem Statement
-
-Manual extraction of numeric data from videos or screen captures is time-consuming and error-prone. HeartReadr automates this process, enabling users to quickly and accurately extract, analyze, and export numeric data from visual sources, streamlining workflows in research, healthcare, and other data-driven fields.
 
 ## Getting Started
 
@@ -64,15 +69,6 @@ Create a `.env` file in the project root (if not present) and set the following 
 - `DEBUG` – Set to `True` for development, `False` for production
 - `ALLOWED_HOSTS` – Comma-separated list of allowed hosts (e.g., `localhost,127.0.0.1`)
 - (Add any third-party API keys or service credentials as needed)
-
-## Project Structure
-
-- `HeartReadrSite/` – Django project settings and URLs
-- `main/` – Main application logic, models, views, forms, services, and templates
-- `media/` – Uploaded and generated media (csvs, frames, input_video, plots)
-- `static/` – Static assets (CSS, JS, favicons)
-- `requirements.txt` – Python dependencies
-- `Procfile`, `runtime.txt` – Deployment configuration
 
 ## Deployment
 
